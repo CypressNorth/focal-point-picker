@@ -85,7 +85,7 @@ class FocalPointPicker
         array $fields,
         WP_Post $post
     ): array {
-        if (!\wp_attachment_is_image($post)) {
+        if (!\wp_attachment_is_image($post) && !\wp_attachment_is('video', $post)) {
             return $fields;
         }
         $focalPoint = new FocalPoint($post);
@@ -130,7 +130,7 @@ class FocalPointPicker
         $id = $post['ID'] ?? '';
         \check_ajax_referer('update-post_' . $id, 'nonce');
 
-        if (!\wp_attachment_is_image($id)) {
+        if (!\wp_attachment_is_image($id) && !\wp_attachment_is('video', $id)) {
             return $post;
         }
 

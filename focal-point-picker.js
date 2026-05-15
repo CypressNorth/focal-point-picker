@@ -106,17 +106,41 @@
       const mediaModalRoot = this.closest(".media-frame-content");
       const classicRoot = this.closest("#post-body-content");
 
+      this.resetButton?.addEventListener("click", this.reset);
+
       const imageWrap = mediaModalRoot
         ? mediaModalRoot.querySelector(".thumbnail-image")
         : classicRoot
           ? classicRoot.querySelector(".wp_attachment_image p")
           : undefined;
 
-      if (!imageWrap) {
-        console.error("No imageWrap found", this);
+      if (imageWrap) {
+        this.prepareImageUI(imageWrap);
         return;
       }
 
+      const videoWrap = mediaModalRoot
+        ? mediaModalRoot.querySelector(".thumbnail-video")
+        : classicRoot
+          ? classicRoot.querySelector(".wp_attachment_holder>.wp-video")
+          : undefined;
+
+      if (videoWrap) {
+        this.querySelector("input")?.removeAttribute("readonly");
+        this.querySelector("input")?.addEventListener("input", () => {
+          const [left, top] = this.getValueFromInput();
+          this.setHandlePosition(left, top);
+          this.adjustResetButton(left, top);
+        });
+        this.initializeVideoUI(videoWrap);
+        return;
+      }
+
+      console.error("No imageWrap found", this);
+      return;
+    }
+
+    prepareImageUI(imageWrap) {
       if (imageWrap.hasAttribute("data-fcp-wrap")) {
         console.log("already initialized", this);
         return;
@@ -168,7 +192,7 @@
      * @return {void}
      */
     initializeUI = () => {
-      const { imageWrap, img, handle, preview, resetButton } = this;
+      const { imageWrap, img, handle, preview } = this;
 
       if (!imageWrap || !img) {
         console.error("Some elements are missing", { imageWrap, img });
@@ -184,7 +208,6 @@
       this.updateUIFromValue();
 
       img.addEventListener("click", this.onImageClick);
-      resetButton.addEventListener("click", this.reset);
 
       $(handle).on("dblclick", this.reset);
 
@@ -205,6 +228,42 @@
         },
         drag: this.applyFocalPointFromHandle,
       });
+    };
+
+    /**
+     * Initialize the user interface
+     * @return {void}
+     */
+    initializeVideoUI = (videoWrapper) => {
+      const { handle } = this;
+
+      let videoFrame;
+      if (videoWrapper.classList.contains("wp-video")) {
+        videoFrame = videoWrapper;
+      } else {
+        videoFrame = videoWrapper?.querySelector(
+          ".thumbnail-video>.wp-media-wrapper.wp-video",
+        );
+      }
+
+      if (!videoFrame) {
+        console.warn(
+          "No video frame found. Skipping showing focal point preview.",
+        );
+        return;
+      }
+
+      videoFrame.style.position = "relative";
+
+      handle.title = "Indicates the focal point of the video";
+      handle.disabled = true;
+      handle.style.cursor = "default";
+      handle.classList.add("before:hidden");
+
+      videoFrame.appendChild(handle);
+
+      window.addEventListener("resize", this.updateUIFromValue);
+      this.updateUIFromValue();
     };
 
     /**
@@ -313,10 +372,11 @@
      */
     reset = () => {
       if (!this.img || !this.imageWrap) {
-        console.error("Something went wrong while getting the image rect");
+        this.input.value = this.defaultPosition.join(" ");
+        this.setHandlePosition(...this.defaultPosition);
+        $(this.input).trigger("change");
         return;
       }
-      const rect = this.img.getBoundingClientRect();
 
       this.setHandlePosition(...this.defaultPosition);
       this.applyFocalPointFromHandle();
@@ -332,17 +392,26 @@
     setHandlePosition(left, top) {
       const { img, handle } = this;
 
-      if (!img) {
+      if (!img && !handle.isConnected) {
         return;
       }
 
-      const point = {
-        left: img.offsetLeft + img.offsetWidth * left,
-        top: img.offsetTop + img.offsetHeight * top,
-      };
-
-      handle.style.setProperty("left", `${point.left}px`);
-      handle.style.setProperty("top", `${point.top}px`);
+      if (img) {
+        const point = {
+          left: img.offsetLeft + img.offsetWidth * left,
+          top: img.offsetTop + img.offsetHeight * top,
+        };
+        handle.style.setProperty("left", `${point.left}px`);
+        handle.style.setProperty("top", `${point.top}px`);
+      } else {
+        // video frame, set relatively
+        let clampPercent = (val) => Math.max(0, Math.min(100, val));
+        handle.style.setProperty("left", `${clampPercent(left * 100)}%`);
+        handle.style.setProperty("top", `${clampPercent(top * 100)}%`);
+        const isCentered = left == 0.5 && top == 0.5;
+        handle.style.opacity = isCentered ? 0 : null;
+        handle.style.pointerEvents = isCentered ? "none" : null;
+      }
     }
 
     /**

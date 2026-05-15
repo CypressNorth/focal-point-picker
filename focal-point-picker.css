@@ -2,7 +2,6 @@
  * Hide the input element
  */
 .compat-field-focalpoint-input {
-
 }
 
 /**
@@ -58,6 +57,9 @@ focal-point-picker [data-focalpoint-preview] {
   background: white;
   transform: translate(-50%, -50%);
 }
+[data-focalpoint-handle].before\:hidden::before {
+  content: none;
+}
 [data-focalpoint-handle]:after {
   content: "";
   display: block;
@@ -70,6 +72,9 @@ focal-point-picker [data-focalpoint-preview] {
     inset 0 0 0 1px white,
     0 0 0 3px #2271b1,
     0 0 0 4px white;
+}
+[data-focalpoint-handle].after\:hidden:after {
+  content: none;
 }
 [data-fcp-wrap] {
   position: relative;

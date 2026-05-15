@@ -28,7 +28,7 @@ final class FocalPoint
     {
         $post = \get_post($post);
 
-        if (!\wp_attachment_is_image($post)) {
+        if (!\wp_attachment_is_image($post) && !\wp_attachment_is('video', $post)) {
             throw new InvalidArgumentException("\$post is not an image");
         }
 
