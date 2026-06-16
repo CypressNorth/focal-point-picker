@@ -209,7 +209,7 @@
 
       img.addEventListener("click", this.onImageClick);
 
-      $(handle).on("dblclick", this.reset);
+      handle.addEventListener("dblclick", this.reset);
 
       $(handle).draggable({
         cancel: "none",
@@ -224,7 +224,7 @@
           this.dragging = false;
           this.togglePreview(false);
           document.body.removeAttribute("data-fcp-dragging");
-          $(this.input).trigger("change");
+          this.input.dispatchEvent(new Event("change", { bubbles: true }));
         },
         drag: this.applyFocalPointFromHandle,
       });
@@ -343,7 +343,7 @@
 
       this.animateHandle(e.x - rect.x, e.y - rect.y).then(() => {
         this.applyFocalPointFromHandle();
-        $(this.input).trigger("change");
+        this.input.dispatchEvent(new Event("change", { bubbles: true }));
       });
     };
 
@@ -354,17 +354,19 @@
      * @param {number} top
      */
     animateHandle(left, top) {
-      return /** @type {Promise<void>} */ (
-        new Promise((resolve, reject) => {
-          $(this.handle).animate(
-            { left, top },
-            {
-              duration: 200,
-              complete: resolve,
-            },
-          );
-        })
+      const fromLeft = this.handle.style.left;
+      const fromTop = this.handle.style.top;
+      const animation = this.handle.animate(
+        [
+          { left: fromLeft, top: fromTop },
+          { left: `${left}px`, top: `${top}px` },
+        ],
+        { duration: 200, fill: "forwards" },
       );
+      return animation.finished.then(() => {
+        this.handle.style.left = `${left}px`;
+        this.handle.style.top = `${top}px`;
+      });
     }
 
     /**
@@ -374,13 +376,13 @@
       if (!this.img || !this.imageWrap) {
         this.input.value = this.defaultPosition.join(" ");
         this.setHandlePosition(...this.defaultPosition);
-        $(this.input).trigger("change");
+        this.input.dispatchEvent(new Event("change", { bubbles: true }));
         return;
       }
 
       this.setHandlePosition(...this.defaultPosition);
       this.applyFocalPointFromHandle();
-      $(this.input).trigger("change");
+      this.input.dispatchEvent(new Event("change", { bubbles: true }));
     };
 
     /**
