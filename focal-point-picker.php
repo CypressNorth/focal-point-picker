@@ -4,7 +4,7 @@
  * Plugin Name: Focal Point Picker
  * Description: Zero-dependency focal point picker for WordPress images and videos
  * Plugin URI: https://github.com/cypressnorth/focal-point-picker
- * Version: 1.4.0
+ * Version: 1.5.0
  * Author: Cypress North
  * Author URI: https://cypressnorth.com/
  * Tested up to: 6.9
