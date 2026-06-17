@@ -2,16 +2,16 @@
 
 /**
  * Plugin Name: Focal Point Picker
- * Description: Zero-dependency custom focal point picker for your WordPress images 🎯
- * Plugin URI: https://github.com/hirasso/focal-point-picker
+ * Description: Zero-dependency focal point picker for WordPress images and videos
+ * Plugin URI: https://github.com/cypressnorth/focal-point-picker
  * Version: 1.4.0
- * Author: Rasso Hilber
- * Author URI: https://rassohilber.com/
- * Tested up to: 6.7
+ * Author: Cypress North
+ * Author URI: https://cypressnorth.com/
+ * Tested up to: 6.9
  * Requires PHP: 8.2
  * License: GPL-3.0-or-later
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
- * GitHub Plugin URI: hirasso/focal-point-picker
+ * GitHub Plugin URI: cypressnorth/focal-point-picker
  */
 
 use Hirasso\FocalPointPicker\FocalPointPicker;

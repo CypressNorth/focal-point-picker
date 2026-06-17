@@ -41,8 +41,8 @@ focal-point-picker [data-focalpoint-preview] {
   width: 0;
   height: 0;
   cursor: move;
-  user-select: all;
-  filter: drop-shadow(1px 1px 2px rgb(0 0 0 / 0.3));
+  user-select: none;
+  filter: drop-shadow(0px 0px 3px rgb(0 0 0 / 0.3));
 }
 [data-focalpoint-handle]:focus {
   outline: 0 !important;
@@ -57,9 +57,6 @@ focal-point-picker [data-focalpoint-preview] {
   background: white;
   transform: translate(-50%, -50%);
 }
-[data-focalpoint-handle].before\:hidden::before {
-  content: none;
-}
 [data-focalpoint-handle]:after {
   content: "";
   display: block;
@@ -72,9 +69,6 @@ focal-point-picker [data-focalpoint-preview] {
     inset 0 0 0 1px white,
     0 0 0 3px #2271b1,
     0 0 0 4px white;
-}
-[data-focalpoint-handle].after\:hidden:after {
-  content: none;
 }
 [data-fcp-wrap] {
   position: relative;

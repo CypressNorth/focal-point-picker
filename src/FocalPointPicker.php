@@ -26,7 +26,7 @@ class FocalPointPicker
     public static function enqueueAssets(): void
     {
         \wp_enqueue_style('focal-point-picker', self::assetUri('/focal-point-picker.css'), [], null);
-        \wp_enqueue_script('focal-point-picker', self::assetUri('/focal-point-picker.js'), ['jquery', 'jquery-ui-draggable'], null, true);
+        \wp_enqueue_script('focal-point-picker', self::assetUri('/focal-point-picker.js'), [], null, true);
 
         $jsConfig = [
             'defaultPosition' => self::getDefaultPosition()

@@ -59,7 +59,7 @@ final class FocalPoint
     public function isDefaultPosition(): bool
     {
         $defaultPosition = FocalPointPicker::getDefaultPosition();
-        return $this->x === $defaultPosition->top && $this->y === $defaultPosition->left;
+        return $this->x === $defaultPosition->left && $this->y === $defaultPosition->top;
     }
 
 
